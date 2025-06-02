@@ -9,6 +9,10 @@ import com.boardSite.question.Question;
 @Mapper
 public interface QuestionMapper {
 	int insertQuestion(Map<String, Object> param);
-
+	
+	int updateQuestion(Map<String, Object> param);
+	
+	int deleteQuestion(Map<String, Object> param);
+	
 	Map<String, Object> questionDetail(Map<String, Object> param);
 }

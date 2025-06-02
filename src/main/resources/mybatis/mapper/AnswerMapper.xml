@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.boardSite.mapper.AnswerMapper">
+
+	<insert id="insertAnswer" parameterType="java.util.HashMap">
+    INSERT INTO answer (
+        content,
+        create_date,
+        question,
+        author
+    ) VALUES (
+        #{content},
+        #{createDate},
+        #{question},
+        #{author}  <!-- username이 들어감 -->
+    )
+</insert>
+    
+    <select id="selectAnswerList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    <![CDATA[ 
+    	SELECT
+    		content,
+    		create_date,
+    		author
+    	FROM
+    		answer
+    	WHERE 
+    		question = #{question_id}
+    ]]>
+    </select>
+</mapper>

@@ -24,4 +24,27 @@
     		WHERE id = #{id}
     	]]>
     </select>
+    
+    <update id="updateQuestion" parameterType="java.util.HashMap">
+	<![CDATA[ 
+		UPDATE
+			question
+		SET
+			subject = #{subject},
+			content = #{content},
+	        modify_date = NOW()
+	    WHERE
+	    	id = #{id}
+	]]>
+	</update>
+	
+	<delete id="deleteQuestion" parameterType="java.util.HashMap">
+	<![CDATA[ 
+		DELETE
+		FROM
+			question
+		WHERE
+			id = #{id}
+	]]>
+	</delete>
 </mapper>

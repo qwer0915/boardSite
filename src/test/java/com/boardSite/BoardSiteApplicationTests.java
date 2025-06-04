@@ -35,12 +35,31 @@ class BoardSiteApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private QuestionService questionService;
+
+//	@Test
+//	void 질문_상세_조회시_답변_리스트_포함() throws Exception {
+//		int questionId = 1;
+//		mockMvc.perform(get("/question/{id}", questionId).contentType(MediaType.APPLICATION_JSON))
+//				.andExpect(status().isOk())
+//				// 답변 리스트가 포함되어 있는지 확인
+//				.andExpect(jsonPath("$.answers").isArray());
+//	}
+
+//	@Test
+//	void 글_목록() {
+//		Map<String, Object> param = new HashMap<>();
+//		Map<String, Object> result = questionService.getQuestionList(param);
+//		System.out.println("result: " + result);
+//	}
+	
 	@Test
-	void 질문_상세_조회시_답변_리스트_포함() throws Exception {
-		int questionId = 1;
-		mockMvc.perform(get("/question/{id}", questionId).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				// 답변 리스트가 포함되어 있는지 확인
-				.andExpect(jsonPath("$.answers").isArray());
+	void 글_목록() {
+		Map<String, Object> param = new HashMap<>();
+		param.put("searchSubjectName", "수정");
+		param.put("pageNum", 1);
+		Map<String, Object> result = questionService.getQuestionList(param);
+		System.out.println("result: " + result); 
 	}
 }

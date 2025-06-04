@@ -30,4 +30,17 @@
     		question = #{question_id}
     ]]>
     </select>
+    
+    <update id="updateAnswer" parameterType="java.util.HashMap">
+    <![CDATA[ 
+    	UPDATE
+    		answer
+    	SET
+    		content = #{content},
+    		create_date = #{createDate}
+  		WHERE
+  			id = #{id}
+    ]]>
+    
+    </update>
 </mapper>

@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.boardSite.answer.AnswerService;
 import com.boardSite.user.SiteUserService;
 
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -112,17 +112,29 @@ public class QuestionRestController {
 		Map<String, Object> param = new HashMap<>();
 		param.put("id", id);
 		Map<String, Object> question = questionService.getQuestionDetail(param);
-		
+
 		Map<String, Object> answerParam = new HashMap<>();
 		answerParam.put("question_id", id);
 		List<Map<String, Object>> answerList = answerService.getAnswerList(answerParam);
-		
+
 		log.info("answerList: {}", answerList);
 		log.info("question: {}", question);
 		if (question == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시글을 찾을 수 없습니다.");
 		}
 		return ResponseEntity.ok(question);
+	}
+	
+	// 글 검색
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ResponseEntity getQuestionListBySearch(
+			@RequestParam(value = "searchSubjectName", required = false) String searchSubjectName,
+			@RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("searchSubjectName", searchSubjectName);
+		param.put("pageNum", pageNum);
+		Map<String, Object> result = questionService.getQuestionList(param);
+		return ResponseEntity.ok(result);
 	}
 
 }

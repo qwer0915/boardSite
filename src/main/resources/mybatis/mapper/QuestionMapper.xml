@@ -47,4 +47,44 @@
 			id = #{id}
 	]]>
 	</delete>
+	
+	
+	
+	<select id="selectQuestionTotalCount" resultType="int" parameterType="java.util.HashMap">
+	<![CDATA[ 
+		SELECT 
+			COUNT(*) AS TOTAL_COUNT
+		FROM
+			question
+		WHERE 1=1
+	]]>
+	<if test="searchSubjectName != null and searchSubjectName != ''">
+		AND subject LIKE CONCAT ('%', #{searchSubjectName} ,'%')
+	</if>
+	</select>
+	
+	<select id="selectQuestionList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	<![CDATA[ 
+		SELECT	
+			id,
+    		subject,
+    		content,
+    		create_date,
+    		author,
+    		modify_date
+    	FROM
+    		question
+    	WHERE
+    		1=1
+	]]>
+	<if test="searchSubjectName != null and searchSubjectName != ''">
+		AND subject LIKE CONCAT ('%', #{searchSubjectName} ,'%')
+	</if>
+	<![CDATA[ 
+   		ORDER BY create_date DESC
+   	]]>
+   	<if test="pageSize != null and pageOffset != null">
+   		LIMIT #{pageSize} OFFSET #{pageOffset}
+   	</if>
+	</select>
 </mapper>

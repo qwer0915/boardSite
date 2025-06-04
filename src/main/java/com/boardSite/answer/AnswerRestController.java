@@ -44,5 +44,27 @@ public class AnswerRestController {
 			return ResponseEntity.internalServerError().body("서버 내부 오류: " + e.getMessage());
 		}
 	}
+	
+	
+	@PostMapping("/update/{questionId}")
+	public ResponseEntity<?> updateAnswer(@PathVariable("questionId") Integer questionId,
+			@RequestBody Map<String, Object> param, HttpSession session) {
+		try {
+			String username = (String) session.getAttribute("loginUser");
+			if (username == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
+
+			Map<String, Object> answerParam = new HashMap<>();
+			answerParam.put("content", param.get("content"));
+			answerParam.put("questionId", questionId);
+			answerParam.put("author", username); // username으로 저장
+
+			Map<String, Object> result = answerService.updateAnswer(answerParam);
+			return ResponseEntity.status(HttpStatus.CREATED).body(result);
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body("서버 내부 오류: " + e.getMessage());
+		}
+	}
 
 }

@@ -9,5 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AnswerMapper {
 	int insertAnswer(Map<String, Object> param);
 
+	int updateAnswer(Map<String, Object> param);
+	
 	List<Map<String, Object>> selectAnswerList(Map<String, Object> param);
 }

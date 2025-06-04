@@ -1,5 +1,6 @@
 package com.boardSite.mapper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -15,4 +16,8 @@ public interface QuestionMapper {
 	int deleteQuestion(Map<String, Object> param);
 	
 	Map<String, Object> questionDetail(Map<String, Object> param);
+	
+	int selectQuestionTotalCount(Map<String, Object> param);
+	
+	List<Map<String, Object>> selectQuestionList(Map<String, Object> param);
 }

@@ -1,6 +1,7 @@
 package com.boardSite.question;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,6 +141,82 @@ public class QuestionService {
 		paramMap.put("id", param.get("id"));
 		Map<String, Object> question_detail = questionMapper.questionDetail(paramMap);
 		resultMap.put("questionDetail", question_detail);
+
+		return resultMap;
+	}
+
+//	@Transactional(readOnly = true)
+//	public Map<String, Object> getQuestionList(Map<String, Object> param){
+//		log.info("QuestionInfo: {}", param);
+//		Map<String, Object> resultMap = new HashMap<String, Object>();
+//		Map<String, Object> paramMap = new HashMap<>();
+//		
+//		List<Map<String,Object>> questionList = questionMapper.selectQuestionList(paramMap);
+//		resultMap.put("questionList", questionList);
+//		log.info("questionList: {}", questionList);
+//		return resultMap;
+//	}
+
+	@Transactional(readOnly = true)
+	public Map<String, Object> getQuestionList(Map<String, Object> param) {
+		log.info("QuestionInfo: {}", param);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
+
+		// TODO param에서 넘어온 검색값 검증
+		String searchSubjectName;
+		Integer pageNum;
+
+		searchSubjectName = (String) param.get("searchSubjectName");
+		pageNum = (Integer) param.get("pageNum");
+
+		searchSubjectName = searchSubjectName != null ? searchSubjectName.trim() : "";
+		pageNum = pageNum != null && pageNum > 0 ? pageNum : 1;
+		
+		log.info("searchSubjectName: {} ", searchSubjectName);
+		log.info("pageNum: {} ", pageNum);
+
+		// TODO paramMap에 넘길 값 전달
+		int pageSize = 5;
+		int offset = (pageNum - 1) * pageSize;
+
+		paramMap.put("searchSubjectName", searchSubjectName);
+		paramMap.put("pageNum", pageNum);
+		paramMap.put("pageSize", pageSize);
+		paramMap.put("offset", offset);
+
+		int totalCount = questionMapper.selectQuestionTotalCount(paramMap);
+		log.info("totalCount: {}", totalCount);
+		resultMap.put("totalCount", totalCount);
+
+		List<Map<String, Object>> question_list = questionMapper.selectQuestionList(paramMap);
+		resultMap.put("question_list", question_list);
+		log.info("question_list: {}", question_list);
+		
+		int firstPageNum = 1;
+		int pageBlockSize = 3;
+		int lastPageNum = (int) Math.ceil((double) totalCount / pageSize);
+		int prevPageNum = pageNum > firstPageNum ? pageNum - 1 : firstPageNum;
+		int nextPageNum = pageNum < lastPageNum ? pageNum + 1 : lastPageNum;
+		int startBlockPage = ((pageNum - 1) / pageBlockSize) * pageBlockSize + 1;
+		int endBlockPage = Math.min(startBlockPage + pageBlockSize - 1, lastPageNum);
+		List<Integer> pageBlockList = new ArrayList<>();
+		for (int i = startBlockPage; i <= endBlockPage; i++) {
+			pageBlockList.add(i);
+		}
+		
+		Map<String, Object> pagingMap = new HashMap<>();
+		pagingMap.put("PAGE_BLOCK_SIZE", pageBlockSize);
+		pagingMap.put("FIRST_PAGE_NUM", firstPageNum);
+		pagingMap.put("LAST_PAGE_NUM", lastPageNum);
+		pagingMap.put("PREV_PAGE_NUM", prevPageNum);
+		pagingMap.put("NEXT_PAGE_NUM", nextPageNum);
+		pagingMap.put("PAGE_BLOCK_LIST", pageBlockList);
+		pagingMap.put("PAGE_NUM", pageNum); 
+		pagingMap.put("PAGE_SIZE", pageSize);
+		pagingMap.put("PAGE_OFFSET", offset);
+		
+		resultMap.put("pagingMap", pagingMap);
 
 		return resultMap;
 	}

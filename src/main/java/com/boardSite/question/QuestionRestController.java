@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.boardSite.answer.AnswerService;
 import com.boardSite.user.SiteUserService;
@@ -32,18 +33,13 @@ public class QuestionRestController {
 
 	// 글 작성
 	@PostMapping("/create")
-	public ResponseEntity createQuestion(@RequestBody Map<String, Object> param, HttpSession session) throws Exception {
+	public ResponseEntity createQuestion(@RequestBody Map<String, Object> param,
+			@SessionAttribute("loginUser") String username // 세션에서 직접 주입
+	) throws Exception {
 		log.info("insert question request: {}", param);
-		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			String username = (String) session.getAttribute("loginUser");
-			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-			}
 			param.put("author", username);
-			log.info("author: {}", username);
-			result = questionService.createQuestion(param);
-			log.info("question detail: {}", param);
+			Map<String, Object> result = questionService.createQuestion(param);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류");
@@ -124,7 +120,7 @@ public class QuestionRestController {
 		}
 		return ResponseEntity.ok(question);
 	}
-	
+
 	// 글 검색
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ResponseEntity getQuestionListBySearch(

@@ -145,17 +145,6 @@ public class QuestionService {
 		return resultMap;
 	}
 
-//	@Transactional(readOnly = true)
-//	public Map<String, Object> getQuestionList(Map<String, Object> param){
-//		log.info("QuestionInfo: {}", param);
-//		Map<String, Object> resultMap = new HashMap<String, Object>();
-//		Map<String, Object> paramMap = new HashMap<>();
-//		
-//		List<Map<String,Object>> questionList = questionMapper.selectQuestionList(paramMap);
-//		resultMap.put("questionList", questionList);
-//		log.info("questionList: {}", questionList);
-//		return resultMap;
-//	}
 
 	@Transactional(readOnly = true)
 	public Map<String, Object> getQuestionList(Map<String, Object> param) {

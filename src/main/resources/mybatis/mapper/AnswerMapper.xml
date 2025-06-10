@@ -10,11 +10,13 @@
         create_date,
         question,
         author
+        update_date
     ) VALUES (
         #{content},
         #{createDate},
         #{question},
-        #{author}  <!-- username이 들어감 -->
+        #{author},
+        #{updateDate}
     )
 </insert>
     
@@ -37,10 +39,20 @@
     		answer
     	SET
     		content = #{content},
-    		create_date = #{createDate}
+    		update_date = #{updateDate}
   		WHERE
-  			id = #{id}
+  			id = #{answerId}
     ]]>
     
     </update>
+    
+    <delete id="deleteAnswer" parameterType="java.util.HashMap">
+	<![CDATA[ 
+		DELETE
+		FROM
+			answer
+		WHERE
+			id = #{answerId}
+	]]>
+	</delete>
 </mapper>

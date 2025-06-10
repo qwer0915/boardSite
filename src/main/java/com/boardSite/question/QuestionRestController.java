@@ -34,10 +34,14 @@ public class QuestionRestController {
 	// 글 작성
 	@PostMapping("/create")
 	public ResponseEntity createQuestion(@RequestBody Map<String, Object> param,
-			@SessionAttribute("loginUser") String username // 세션에서 직접 주입
+			HttpSession session
 	) throws Exception {
 		log.info("insert question request: {}", param);
 		try {
+			String username = (String) session.getAttribute("loginUser");
+			if (username == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
 			param.put("author", username);
 			Map<String, Object> result = questionService.createQuestion(param);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
@@ -50,8 +54,8 @@ public class QuestionRestController {
 	@PostMapping("/update/{id}")
 	public ResponseEntity<?> updateQuestion(@PathVariable("id") int id, @RequestBody Map<String, Object> param,
 			HttpSession session) {
+		log.info("update question request: {}", param);
 		try {
-			// 1. 로그인 체크
 			String username = (String) session.getAttribute("loginUser");
 			if (username == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -78,6 +82,7 @@ public class QuestionRestController {
 	@PostMapping("/delete/{id}")
 	public ResponseEntity<?> deleteQuestion(@PathVariable("id") int id, @RequestBody Map<String, Object> param,
 			HttpSession session) {
+		log.info("delete question request: {}", param);
 		try {
 			// 1. 로그인 체크
 			String username = (String) session.getAttribute("loginUser");

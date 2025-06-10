@@ -21,12 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AnswerService {
 	private final AnswerMapper answerMapper;
-    private final QuestionMapper questionMapper;
-    
-    @Transactional(readOnly = false)
-    public Map<String, Object> createAnswer(Map<String, Object> param) throws Exception {
-    	log.info("param: {}", param);
-    	Map<String, Object> result = new HashMap<>();
+	private final QuestionMapper questionMapper;
+
+	@Transactional(readOnly = false)
+	public Map<String, Object> createAnswer(Map<String, Object> param) throws Exception {
+		log.info("param: {}", param);
+		Map<String, Object> result = new HashMap<>();
 
 //        // 필수 필드 검증
 //        if (!param.containsKey("content") || param.get("content") == null) {
@@ -38,69 +38,77 @@ public class AnswerService {
 //        if (!param.containsKey("author")) {
 //            throw new IllegalArgumentException("사용자 정보가 없습니다.");
 //        }
-        // 질문 존재 여부 확인
-        Map<String, Object> questionParam = new HashMap<>();
-        questionParam.put("id", param.get("questionId"));
-        if (questionMapper.questionDetail(questionParam) == null) {
-            throw new IllegalArgumentException("존재하지 않는 질문입니다.");
-        }
+		// 질문 존재 여부 확인
+		Map<String, Object> questionParam = new HashMap<>();
+		questionParam.put("id", param.get("questionId"));
+		if (questionMapper.questionDetail(questionParam) == null) {
+			throw new IllegalArgumentException("존재하지 않는 질문입니다.");
+		}
 
-        // 답변 데이터 구성 (author는 username)
-        Map<String, Object> insertParam = new HashMap<>();
-        insertParam.put("content", param.get("content"));
-        insertParam.put("createDate", LocalDateTime.now());
-        insertParam.put("question", param.get("questionId"));
-        insertParam.put("author", param.get("author")); // username
+		// 답변 데이터 구성 (author는 username)
+		Map<String, Object> insertParam = new HashMap<>();
+		insertParam.put("content", param.get("content"));
+		insertParam.put("createDate", LocalDateTime.now());
+		insertParam.put("question", param.get("questionId"));
+		insertParam.put("author", param.get("author")); // username
+		insertParam.put("updateDate", LocalDateTime.now()); // username
 
-        int insertResult = answerMapper.insertAnswer(insertParam);
-        if (insertResult != 1) {
-        	System.out.println("실패...!");
-            throw new RuntimeException("답변 저장에 실패했습니다.");
-        }
+		int insertResult = answerMapper.insertAnswer(insertParam);
+		if (insertResult != 1) {
+			System.out.println("실패...!");
+			throw new RuntimeException("답변 저장에 실패했습니다.");
+		}
 
-        result.put("success", true);
-        result.put("message", "답변이 성공적으로 등록되었습니다.");
-        log.info("result: {}", result);
-        return result;
-    }
-    
-    
-    // 댓글 수정
-    @Transactional(readOnly = false)
-    public Map<String, Object> updateAnswer(Map<String, Object> param) throws Exception {
-    	log.info("param: {}", param);
-    	Map<String, Object> result = new HashMap<>();
+		result.put("success", true);
+		result.put("message", "답변이 성공적으로 등록되었습니다.");
+		log.info("result: {}", result);
+		return result;
+	}
 
-        // 질문 존재 여부 확인
-        Map<String, Object> questionParam = new HashMap<>();
-        questionParam.put("id", param.get("questionId"));
-        if (questionMapper.questionDetail(questionParam) == null) {
-            throw new IllegalArgumentException("존재하지 않는 질문입니다.");
-        }
+	// 댓글 수정
+	@Transactional(readOnly = false)
+	public Map<String, Object> updateAnswer(Map<String, Object> param) throws Exception {
+		log.info("param: {}", param);
+		Map<String, Object> result = new HashMap<>();
 
-        // 답변 데이터 구성 (author는 username)
-        Map<String, Object> insertParam = new HashMap<>();
-        insertParam.put("content", param.get("content"));
-        insertParam.put("createDate", LocalDateTime.now());
+		// 답변 데이터 구성 (author는 username)
+		Map<String, Object> insertParam = new HashMap<>();
+		insertParam.put("content", param.get("content"));
+		insertParam.put("updateDate", LocalDateTime.now());
 
-        int insertResult = answerMapper.insertAnswer(insertParam);
-        if (insertResult != 1) {
-        	System.out.println("실패...!");
-            throw new RuntimeException("답변 수정에 실패했습니다.");
-        }
+		int updateResult = answerMapper.insertAnswer(insertParam);
+		if (updateResult != 1) {
+			System.out.println("실패...!");
+			throw new RuntimeException("답변 수정에 실패했습니다.");
+		}
 
-        result.put("success", true);
-        result.put("message", "답변이 성공적으로 수정되었습니다.");
-        log.info("result: {}", result);
-        return result;
-    }
-    
-    
-    
-    @Transactional(readOnly = true)
-    public List<Map<String, Object>> getAnswerList(Map<String, Object> param) {
-    	log.info("param: {}", param);
-        return answerMapper.selectAnswerList(param);
-    }
+		result.put("success", true);
+		result.put("message", "답변이 성공적으로 수정되었습니다.");
+		log.info("result: {}", result);
+		return result;
+	}
 
+	@Transactional(readOnly = true)
+	public List<Map<String, Object>> getAnswerList(Map<String, Object> param) {
+		log.info("param: {}", param);
+		return answerMapper.selectAnswerList(param);
+	}
+
+	// 댓글 삭제
+	@Transactional(readOnly = false)
+	public Map<String, Object> deleteAnswer(Map<String, Object> param) throws Exception {
+		log.info("param: {}", param);
+		Map<String, Object> result = new HashMap<>();
+
+		int deleteResult = answerMapper.deleteAnswer(param);
+		if (deleteResult != 1) {
+			System.out.println("실패...!");
+			throw new RuntimeException("답변 삭제에 실패했습니다.");
+		}
+
+		result.put("success", true);
+		result.put("message", "답변이 성공적으로 삭제되었습니다.");
+		log.info("result: {}", result);
+		return result;
+	}
 }

@@ -46,8 +46,8 @@ public class AnswerRestController {
 	}
 	
 	
-	@PostMapping("/update/{questionId}")
-	public ResponseEntity<?> updateAnswer(@PathVariable("questionId") Integer questionId,
+	@PostMapping("/update/{answerId}")
+	public ResponseEntity<?> updateAnswer(@PathVariable("answerId") Integer answerId,
 			@RequestBody Map<String, Object> param, HttpSession session) {
 		try {
 			String username = (String) session.getAttribute("loginUser");
@@ -57,13 +57,42 @@ public class AnswerRestController {
 
 			Map<String, Object> answerParam = new HashMap<>();
 			answerParam.put("content", param.get("content"));
-			answerParam.put("questionId", questionId);
+			answerParam.put("answerId", answerId);
 			answerParam.put("author", username); // username으로 저장
 
 			Map<String, Object> result = answerService.updateAnswer(answerParam);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().body("서버 내부 오류: " + e.getMessage());
+		}
+	}
+	
+	
+	@PostMapping("/delete/{answerId}")
+	public ResponseEntity<?> deleteAnswer(@PathVariable("answerId") int id, @RequestBody Map<String, Object> param,
+			HttpSession session) {
+		log.info("delete question request: {}", param);
+		try {
+			// 1. 로그인 체크
+			String username = (String) session.getAttribute("loginUser");
+			if (username == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			}
+
+			// 2. 파라미터에 id, author 추가
+			param.put("id", id);
+			param.put("username", username);
+			// 3. 서비스 호출
+			Map<String, Object> result = answerService.deleteAnswer(param);
+
+			// 4. 결과 반환
+			if (Boolean.TRUE.equals(result.get("success"))) {
+				return ResponseEntity.ok(result);
+			} else {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result.get("message"));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류");
 		}
 	}
 

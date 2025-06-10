@@ -39,13 +39,16 @@ public class QuestionService {
 		paramMap.put("content", param.get("content"));
 		paramMap.put("createDate", LocalDateTime.now());
 		paramMap.put("author", param.get("author"));
+		paramMap.put("modifyDate", LocalDateTime.now());
 		int insertQuestionResult = questionMapper.insertQuestion(paramMap);
 
 		if (insertQuestionResult != 1) {
-			throw new Exception("!!!");
+			resultMap.put("success", false);
+			resultMap.put("message", "글 작성에 실패했습니다.");
+			return resultMap;
 		}
 		resultMap.put("success", true);
-		resultMap.put("message", "글 작성 성공");
+		resultMap.put("message", "글 작성에 성공하였습니다.");
 		return resultMap;
 	}
 
@@ -87,7 +90,7 @@ public class QuestionService {
 		}
 
 		resultMap.put("success", true);
-		resultMap.put("message", "게시글이 성공적으로 수정되었습니다.");
+		resultMap.put("message", "글 수정 성공");
 		return resultMap;
 	}
 

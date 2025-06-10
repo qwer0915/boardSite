@@ -6,8 +6,8 @@
 
 	<insert id="insertQuestion" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
 	    <![CDATA[
-	    INSERT INTO question (subject, content, create_date, author)
-        VALUES (#{subject}, #{content}, #{createDate}, #{author})
+	    INSERT INTO question (subject, content, create_date, author, modify_date)
+        VALUES (#{subject}, #{content}, #{createDate}, #{author}, #{modifyDate})
 	    ]]>
     </insert>
     

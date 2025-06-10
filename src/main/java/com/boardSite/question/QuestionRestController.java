@@ -115,7 +115,7 @@ public class QuestionRestController {
 		Map<String, Object> question = questionService.getQuestionDetail(param);
 
 		Map<String, Object> answerParam = new HashMap<>();
-		answerParam.put("question_id", id);
+		answerParam.put("questionId", id);
 		List<Map<String, Object>> answerList = answerService.getAnswerList(answerParam);
 
 		log.info("answerList: {}", answerList);
@@ -127,7 +127,7 @@ public class QuestionRestController {
 	}
 
 	// 글 검색
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/list", method = {RequestMethod.GET,RequestMethod.POST})
 	public ResponseEntity getQuestionListBySearch(
 			@RequestParam(value = "searchSubjectName", required = false) String searchSubjectName,
 			@RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum) {

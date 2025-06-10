@@ -8,13 +8,13 @@
     INSERT INTO answer (
         content,
         create_date,
-        question,
+        question_id,
         author
-        update_date
+        modify_date
     ) VALUES (
         #{content},
         #{createDate},
-        #{question},
+        #{questionId},
         #{author},
         #{updateDate}
     )
@@ -26,10 +26,11 @@
     		content,
     		create_date,
     		author
+    		modify_date,
     	FROM
     		answer
     	WHERE 
-    		question = #{question_id}
+    		question_id = #{question_id}
     ]]>
     </select>
     
@@ -39,7 +40,7 @@
     		answer
     	SET
     		content = #{content},
-    		update_date = #{updateDate}
+    		modify_date = #{updateDate}
   		WHERE
   			id = #{answerId}
     ]]>

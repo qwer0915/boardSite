@@ -21,7 +21,7 @@
     			author,
     			modify_date
     		FROM question
-    		WHERE id = #{id}
+    		WHERE id = #{questionId}
     	]]>
     </select>
     
@@ -34,7 +34,7 @@
 			content = #{content},
 	        modify_date = NOW()
 	    WHERE
-	    	id = #{id}
+	    	id = #{questionId}
 	]]>
 	</update>
 	

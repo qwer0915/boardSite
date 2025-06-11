@@ -65,7 +65,7 @@ public class QuestionService {
 			resultMap.put("message", "게시글을 찾을 수 없습니다.");
 			return resultMap;
 		}
-
+		System.out.println("!!!");
 		// 2. 권한 체크 (작성자만 수정 가능)
 		String dbAuthor = (String) questionDetail.get("author");
 		String username = (String) param.get("username");
@@ -75,9 +75,10 @@ public class QuestionService {
 			return resultMap;
 		}
 
+		System.out.println("@@@");
 		// 3. 수정 파라미터 준비
 		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("id", param.get("id"));
+		paramMap.put("questionId", param.get("questionId"));
 		paramMap.put("subject", param.get("subject"));
 		paramMap.put("content", param.get("content"));
 
@@ -141,7 +142,7 @@ public class QuestionService {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, Object> paramMap = new HashMap<>();
 
-		paramMap.put("id", param.get("id"));
+		paramMap.put("questionId", param.get("questionId"));
 		Map<String, Object> question_detail = questionMapper.questionDetail(paramMap);
 		resultMap.put("questionDetail", question_detail);
 

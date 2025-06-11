@@ -6,16 +6,19 @@
 
 	<insert id="insertUser" parameterType="java.util.HashMap">
 	<![CDATA[
-		insert into users(username, password, email)
+		insert into siteUser(username, password, email)
 		values (#{username}, #{password}, #{email})
 	]]>
 	</insert>
 	
 	<select id="checkDuplicateUsername" parameterType="java.util.HashMap" resultType="int">
 	<![CDATA[ 
-		SELECT COUNT(*) AS TOTAL_COUNT
-		FROM users
-		WHERE username = #{username}
+		SELECT 
+			COUNT(*) AS TOTAL_COUNT
+		FROM 
+			siteUser
+		WHERE
+		 	username = #{username}
 	]]>
 	</select>
 	
@@ -26,8 +29,10 @@
 			username,
 			password,
 			email
-		FROM users
-		WHERE username = #{username}
+		FROM
+			siteUser
+		WHERE 
+			username = #{username}
 	]]>
 	</select>
 </mapper>

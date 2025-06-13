@@ -79,8 +79,8 @@ public class QuestionRestController {
 	}
 
 	// 글 삭제
-	@PostMapping("/delete/{id}")
-	public ResponseEntity<?> deleteQuestion(@PathVariable("id") int id, @RequestBody Map<String, Object> param,
+	@PostMapping("/delete/{questionId}")
+	public ResponseEntity<?> deleteQuestion(@PathVariable("questionId") int questionId, @RequestBody Map<String, Object> param,
 			HttpSession session) {
 		log.info("delete question request: {}", param);
 		try {
@@ -91,7 +91,7 @@ public class QuestionRestController {
 			}
 
 			// 2. 파라미터에 id, author 추가
-			param.put("id", id);
+			param.put("questionId", questionId);
 			param.put("username", username);
 			// 3. 서비스 호출
 			Map<String, Object> result = questionService.deleteQuestion(param);

@@ -28,110 +28,127 @@ public class QuestionService {
 	// 글 작성
 	@Transactional(readOnly = false)
 	public Map<String, Object> createQuestion(Map<String, Object> param) throws Exception {
-		log.info("Insert QuestionInfo: {}", param);
+		log.info("createQuestion 메서드: {}", param);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, Object> paramMap = new HashMap<>();
 
-		// TODO 입력값 검증
+		// TODO 권한 체크
+		//String dbAuthor = (String) questionDetail.get("author");
+		String username = (String) param.get("username");
+		if (username == null) {
+			resultMap.put("success", false);
+			resultMap.put("message", "게시글 작성 권한이 없습니다.");
+			log.info("게시글 작성 권한 없음");
+			return resultMap;
+		}
 
 		// TODO 글 작성
 		paramMap.put("subject", param.get("subject"));
 		paramMap.put("content", param.get("content"));
 		paramMap.put("createDate", LocalDateTime.now());
-		paramMap.put("author", param.get("author"));
+		paramMap.put("author", param.get("username"));
 		paramMap.put("modifyDate", LocalDateTime.now());
 		int insertQuestionResult = questionMapper.insertQuestion(paramMap);
 
 		if (insertQuestionResult != 1) {
 			resultMap.put("success", false);
 			resultMap.put("message", "글 작성에 실패했습니다.");
+			log.info("작성 권한 없음");
 			return resultMap;
 		}
 		resultMap.put("success", true);
 		resultMap.put("message", "글 작성에 성공하였습니다.");
+		log.info("글 작성 성공");
 		return resultMap;
 	}
 
 	// 글 수정
 	@Transactional(readOnly = false)
 	public Map<String, Object> updateQuestion(Map<String, Object> param) throws Exception {
-		log.info("Update QuestionInfo: {}", param);
+		log.info("updateQuestion 메서드: {}", param);
 		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> paramMap = new HashMap<>();
 
-		// 1. 게시글 상세 조회
-		Map<String, Object> questionDetail = questionMapper.questionDetail(param);
+		// TODO 게시글 존재 여부 확인
+		paramMap.put("questionId", param.get("questionId"));
+		Map<String, Object> questionDetail = questionMapper.questionDetail(paramMap);
 		if (questionDetail == null) {
 			resultMap.put("success", false);
 			resultMap.put("message", "게시글을 찾을 수 없습니다.");
-			return resultMap;
-		}
-		System.out.println("!!!");
-		// 2. 권한 체크 (작성자만 수정 가능)
-		String dbAuthor = (String) questionDetail.get("author");
-		String username = (String) param.get("username");
-		if (!username.equals(dbAuthor)) {
-			resultMap.put("success", false);
-			resultMap.put("message", "수정 권한이 없습니다.");
+			log.info("게시글 존재하지 않음");
 			return resultMap;
 		}
 
-		System.out.println("@@@");
-		// 3. 수정 파라미터 준비
-		Map<String, Object> paramMap = new HashMap<>();
+		// TODO 권한 체크
+		String dbAuthor = (String) questionDetail.get("author");
+		String username = (String) param.get("username");
+
+		if (!username.equals(dbAuthor)) {
+			resultMap.put("success", false);
+			resultMap.put("message", "수정 권한이 없습니다.");
+			log.info("게시글 수정 권한 없음");
+			return resultMap;
+		}
+
+		// TODO 게시글 수정
 		paramMap.put("questionId", param.get("questionId"));
 		paramMap.put("subject", param.get("subject"));
 		paramMap.put("content", param.get("content"));
 
-		// 4. DB 업데이트
 		int updateResult = questionMapper.updateQuestion(paramMap);
 		if (updateResult != 1) {
 			resultMap.put("success", false);
 			resultMap.put("message", "게시글 수정에 실패했습니다.");
+			log.info("게시글 수정 실패");
 			return resultMap;
 		}
 
 		resultMap.put("success", true);
 		resultMap.put("message", "글 수정 성공");
+		log.info("게시글 수정 성공");
 		return resultMap;
 	}
 
 	// 글 삭제
 	@Transactional(readOnly = false)
 	public Map<String, Object> deleteQuestion(Map<String, Object> param) throws Exception {
-		log.info("Delete QuestionInfo: {}", param);
+		log.info("deleteQuestion 메서드: {}", param);
 		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> paramMap = new HashMap<>();
 
-		// 1. 게시글 상세 조회
+		// TODO 게시글 존재 여부 확인
+		paramMap.put("questionId", param.get("questionId"));
 		Map<String, Object> questionDetail = questionMapper.questionDetail(param);
 		if (questionDetail == null) {
 			resultMap.put("success", false);
 			resultMap.put("message", "게시글을 찾을 수 없습니다.");
+			log.info("게시글 존재하지 않음");
 			return resultMap;
 		}
 
-		// 2. 권한 체크 (작성자만 삭제 가능)
+		// TODO 권한 체크
 		String dbAuthor = (String) questionDetail.get("author");
 		String username = (String) param.get("username");
 		if (!username.equals(dbAuthor)) {
 			resultMap.put("success", false);
 			resultMap.put("message", "삭제 권한이 없습니다.");
+			log.info("삭제 권한 없음");
 			return resultMap;
 		}
 
-		// 3. 삭제 파라미터 준비
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("id", param.get("id"));
-
-		// 4. DB 업데이트
+		// TODO 게시글 삭제
+		paramMap.put("questionId", param.get("questionId"));
 		int deleteResult = questionMapper.deleteQuestion(paramMap);
 		if (deleteResult != 1) {
 			resultMap.put("success", false);
 			resultMap.put("message", "게시글 삭제에 실패했습니다.");
+			log.info("삭제 실패");
 			return resultMap;
 		}
 
 		resultMap.put("success", true);
 		resultMap.put("message", "게시글이 성공적으로 삭제되었습니다.");
+		log.info("글 삭제 성공");
 		return resultMap;
 	}
 
@@ -149,7 +166,6 @@ public class QuestionService {
 		return resultMap;
 	}
 
-
 	@Transactional(readOnly = true)
 	public Map<String, Object> getQuestionList(Map<String, Object> param) {
 		log.info("QuestionInfo: {}", param);
@@ -165,7 +181,7 @@ public class QuestionService {
 
 		searchSubjectName = searchSubjectName != null ? searchSubjectName.trim() : "";
 		pageNum = pageNum != null && pageNum > 0 ? pageNum : 1;
-		
+
 		log.info("searchSubjectName: {} ", searchSubjectName);
 		log.info("pageNum: {} ", pageNum);
 
@@ -185,7 +201,7 @@ public class QuestionService {
 		List<Map<String, Object>> question_list = questionMapper.selectQuestionList(paramMap);
 		resultMap.put("question_list", question_list);
 		log.info("question_list: {}", question_list);
-		
+
 		int firstPageNum = 1;
 		int pageBlockSize = 3;
 		int lastPageNum = (int) Math.ceil((double) totalCount / pageSize);
@@ -197,7 +213,7 @@ public class QuestionService {
 		for (int i = startBlockPage; i <= endBlockPage; i++) {
 			pageBlockList.add(i);
 		}
-		
+
 		Map<String, Object> pagingMap = new HashMap<>();
 		pagingMap.put("PAGE_BLOCK_SIZE", pageBlockSize);
 		pagingMap.put("FIRST_PAGE_NUM", firstPageNum);
@@ -205,10 +221,10 @@ public class QuestionService {
 		pagingMap.put("PREV_PAGE_NUM", prevPageNum);
 		pagingMap.put("NEXT_PAGE_NUM", nextPageNum);
 		pagingMap.put("PAGE_BLOCK_LIST", pageBlockList);
-		pagingMap.put("PAGE_NUM", pageNum); 
+		pagingMap.put("PAGE_NUM", pageNum);
 		pagingMap.put("PAGE_SIZE", pageSize);
 		pagingMap.put("PAGE_OFFSET", offset);
-		
+
 		resultMap.put("pagingMap", pagingMap);
 
 		return resultMap;

@@ -36,7 +36,7 @@ public class AnswerRestController {
 			Map<String, Object> answerParam = new HashMap<>();
 			answerParam.put("content", param.get("content"));
 			answerParam.put("questionId", questionId);
-			answerParam.put("author", username); // username으로 저장
+			answerParam.put("author", username);
 
 			Map<String, Object> result = answerService.createAnswer(answerParam);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);

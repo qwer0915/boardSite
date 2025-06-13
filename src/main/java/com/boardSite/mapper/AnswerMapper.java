@@ -14,4 +14,6 @@ public interface AnswerMapper {
 	int deleteAnswer(Map<String, Object> param);
 	
 	List<Map<String, Object>> selectAnswerList(Map<String, Object> param);
+	
+	Map<String, Object> answerDetail(Map<String, Object> param);
 }

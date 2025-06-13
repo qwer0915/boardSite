@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.boardSite.answer.AnswerService;
@@ -42,12 +43,15 @@ import jakarta.servlet.http.HttpSession;
 class BoardSiteApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private QuestionService questionService;
 
 	@Autowired
 	private SiteUserService siteUserService;
+
+	@Autowired
+	private AnswerService answerService;
 
 //	@Test
 //	void 회원가입() throws Exception{
@@ -59,7 +63,7 @@ class BoardSiteApplicationTests {
 //		Map<String, Object> result = siteUserService.createNewUser(param);
 //		System.out.println("result: "+result);
 //	}
-	
+
 //	@Test
 //	void 로그인() throws Exception{
 //		Map<String, Object> param = new HashMap<>();
@@ -72,8 +76,7 @@ class BoardSiteApplicationTests {
 //		
 //	}
 //	
-	
-	
+
 //	@Test
 //	void 로그인_후_글_작성_서비스직접호출() throws Exception {
 //	    // 1. 회원 가입 (필요하다면)
@@ -105,7 +108,7 @@ class BoardSiteApplicationTests {
 //	    // 4. 결과 검증 (Optional)
 //	    assertTrue((Boolean) createResult.get("success"));
 //	}
-	
+
 //	@Test
 //	void 질문_상세_조회시_답변_리스트_포함() throws Exception {
 //		int questionId = 2;
@@ -135,35 +138,185 @@ class BoardSiteApplicationTests {
 //		System.out.println("result: " + result);
 //	}
 
+// -------------------------------------------------------------
+//	@Test
+//	void 로그인_후_글_작선_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 글 작성
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//		
+//		Map<String, Object> questionParam = new HashMap<>();
+//		questionParam.put("username", username);
+//		questionParam.put("subject", "123");
+//		questionParam.put("content", "123");
+//
+//		Map<String, Object> createResult = questionService.createQuestion(questionParam);
+//		System.out.println("글 작선 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 로그인_후_글_수정_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 글 작성
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//		
+//		Map<String, Object> questionParam = new HashMap<>();
+//		int questionId = 3;
+//		questionParam.put("questionId", questionId);
+//		questionParam.put("username", username);
+//		questionParam.put("subject", "서비스 직접 호출 테스트 제목2 수정 버전");
+//		questionParam.put("content", "서비스 직접 호출 테스트 내용2 수정 버전");
+//
+//		Map<String, Object> createResult = questionService.updateQuestion(questionParam);
+//		System.out.println("글 수정 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 로그인_후_글_삭제_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 글 작성
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//		
+//		Map<String, Object> questionParam = new HashMap<>();
+//		int questionId = 3;
+//		questionParam.put("questionId", questionId);
+//		questionParam.put("username", username);
+//
+//		Map<String, Object> createResult = questionService.deleteQuestion(questionParam);
+//		System.out.println("글 삭제 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 로그인_후_댓글_작성_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 댓글 작성
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//		
+//		Map<String, Object> answerParam = new HashMap<>();
+//		int questionId = 1;
+//		answerParam.put("questionId", questionId);
+//		answerParam.put("username", username);
+//		answerParam.put("content", "테스트 댓글입니다.");
+//		Map<String, Object> createResult = answerService.createAnswer(answerParam);
+//		System.out.println("댓글 작성 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 로그인_후_댓글_수정_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 댓글 수정
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//
+//		Map<String, Object> answerParam = new HashMap<>();
+//		int answerId = 1;
+//		answerParam.put("answerId", answerId);
+//		answerParam.put("username", username);
+//		answerParam.put("content", "수정 댓글입니다.");
+//		Map<String, Object> createResult = answerService.updateAnswer(answerParam);
+//		System.out.println("댓글 작성 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 로그인_후_댓글_삭제_서비스직접호출() throws Exception {
+//		// 1. 로그인
+//
+//		Map<String, Object> loginParam = new HashMap<>();
+//		loginParam.put("username", "111");
+//		loginParam.put("password", "111");
+//		Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
+//		System.out.println("로그인 결과: " + loginResult);
+//
+//		// 3. 로그인 성공 시 댓글 수정
+//		Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
+//		String username = (String) userInfo.get("username");
+//
+//		Map<String, Object> answerParam = new HashMap<>();
+//		int answerId = 1;
+//		answerParam.put("answerId",  answerId);
+//		answerParam.put("username",  username);
+//		Map<String, Object> createResult = answerService.deleteAnswer(answerParam);
+//		System.out.println("댓글 작성 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
+
+//	@Test
+//	void 댓글_조회() throws Exception {
+//		Map<String, Object> answerParam = new HashMap<>();
+//		int answerId = 2;
+//		answerParam.put("answerId",  answerId);
+//		Map<String, Object> createResult = answerService.getAnswerDetail(answerParam);
+//		System.out.println("댓글 조회 결과: " + createResult);
+//
+//		// 4. 결과 검증 (Optional)
+//		assertTrue((Boolean) createResult.get("success"));
+//	}
 
 	@Test
-	void 로그인_후_글_수정_서비스직접호출() throws Exception {
-	    // 1. 로그인
-		
-	    Map<String, Object> loginParam = new HashMap<>();
-	    loginParam.put("username", "111");
-	    loginParam.put("password", "111");
-	    Map<String, Object> loginResult = siteUserService.loginByUserInfo(loginParam);
-	    System.out.println("로그인 결과: " + loginResult);
-
-	    // 3. 로그인 성공 시 글 작성
-	    Map<String, Object> userInfo = (Map<String, Object>) loginResult.get("userInfo");
-	    String username = (String) userInfo.get("username");
-
-	    Map<String, Object> questionParam = new HashMap<>();
-	    int questionId = 2;
-	    questionParam.put("questionId", questionId);
-	    questionParam.put("author", username);
-	    questionParam.put("subject", "서비스 직접 호출 테스트 제목2 수정 버전");
-	    questionParam.put("content", "서비스 직접 호출 테스트 내용2 수정 버전");
-
-	    Map<String, Object> createResult = questionService.updateQuestion(questionParam);
-	    System.out.println("글 수정 결과: " + createResult);
-
-	    // 4. 결과 검증 (Optional)
-	    assertTrue((Boolean) createResult.get("success"));
+	void 질문_상세_조회시_답변_리스트_포함() throws Exception {
+		int questionId = 1;
+		Map<String, Object> param = new HashMap<>();
+		param.put("questionId", questionId);
+		Map<String, Object> question = questionService.getQuestionDetail(param);
+		List<Map<String, Object>> answer = answerService.getAnswerList(param);
+		System.out.println("question: " + question);
+		System.out.println("answer: " + answer);
 	}
-	
-	
 
 }

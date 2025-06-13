@@ -3,26 +3,25 @@
 
 <mapper
 	namespace="com.boardSite.mapper.AnswerMapper">
-
+	
+	<!-- 댓글 작성 -->
 	<insert id="insertAnswer" parameterType="java.util.HashMap">
-    INSERT INTO answer (
-        content,
-        create_date,
-        question_id,
-        author
-        modify_date
-    ) VALUES (
-        #{content},
-        #{createDate},
-        #{questionId},
-        #{author},
-        #{updateDate}
-    )
-</insert>
+    <![CDATA[ 
+    	INSERT INTO answer (content, create_date, question_id, author, modify_date) 
+    	VALUES (
+      		#{content},
+       	 	#{createDate},
+        	#{questionId},
+       	 	#{author},
+        	#{updateDate}
+    	)
+    ]]>
+	</insert>
     
+    <!-- 특정 게시글의 댓글 목록 조회 -->
     <select id="selectAnswerList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
     <![CDATA[ 
-    	SELECT
+   	 	SELECT
     		content,
     		create_date,
     		author,
@@ -30,10 +29,27 @@
     	FROM
     		answer
     	WHERE 
-    		question_id = #{question_id}
+    		question_id = #{questionId}
     ]]>
     </select>
     
+     <!-- 댓글 상세 조회 -->
+    <select id="answerDetail" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    <![CDATA[ 
+   	 	SELECT
+    		content,
+    		create_date,
+    		question_id,
+    		author,
+    		modify_date
+    	FROM
+    		answer
+    	WHERE 
+    		id = #{answerId}
+    ]]>
+    </select>
+    
+    <!-- 댓글 수정 -->
     <update id="updateAnswer" parameterType="java.util.HashMap">
     <![CDATA[ 
     	UPDATE
@@ -47,6 +63,7 @@
     
     </update>
     
+    <!-- 댓글 삭제 -->
     <delete id="deleteAnswer" parameterType="java.util.HashMap">
 	<![CDATA[ 
 		DELETE

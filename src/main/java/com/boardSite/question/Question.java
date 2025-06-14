@@ -13,6 +13,7 @@ public class Question {
 	private String subject;
 	private String content;
 	private LocalDateTime createDate;
+	private List<?> answerList;	
 	private String author;
 	private LocalDateTime modifyDate;
 }

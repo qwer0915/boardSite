@@ -5,11 +5,12 @@
 	namespace="com.boardSite.mapper.AnswerMapper">
 
 	<insert id="insertAnswer" parameterType="java.util.HashMap">
+    <![CDATA[ 
     INSERT INTO answer (
         content,
         create_date,
         question_id,
-        author
+        author,
         modify_date
     ) VALUES (
         #{content},
@@ -18,6 +19,7 @@
         #{author},
         #{updateDate}
     )
+    ]]>
 </insert>
     
     <select id="selectAnswerList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
@@ -25,8 +27,8 @@
     	SELECT
     		content,
     		create_date,
-    		author
-    		modify_date,
+    		author,
+    		modify_date
     	FROM
     		answer
     	WHERE 

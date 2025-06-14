@@ -38,9 +38,9 @@ public class QuestionRestController {
 	) throws Exception {
 		log.info("insert question request: {}", param);
 		try {
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 			param.put("author", username);
 			Map<String, Object> result = questionService.createQuestion(param);

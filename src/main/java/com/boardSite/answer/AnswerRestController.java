@@ -48,20 +48,21 @@ public class AnswerRestController {
 	}
 	
 	
-	@PostMapping("/update/{answerId}")
-	public ResponseEntity<?> updateAnswer(@PathVariable("answerId") Integer answerId,
+	@PostMapping("/update")
+	public ResponseEntity<?> updateAnswer(
 			@RequestBody Map<String, Object> param, HttpSession session) {
 		try {
-			String username = (String) param.get("author");
+			Integer id = ((Number)param.get("answerId")).intValue();
+			String username = (String) param.get("username");
+			Integer questionId =((Number)param.get("questionId")).intValue();
 			if (username == null) {
 			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			Map<String, Object> answerParam = new HashMap<>();
 			answerParam.put("content", param.get("content"));
-			answerParam.put("answerId", answerId);
-			answerParam.put("author", username); // username으로 저장
-
+			answerParam.put("answerId", id);
+			answerParam.put("username", username); 
 			Map<String, Object> result = answerService.updateAnswer(answerParam);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
 		} catch (Exception e) {
@@ -70,23 +71,25 @@ public class AnswerRestController {
 	}
 	
 	
-	@PostMapping("/delete/{answerId}")
-	public ResponseEntity<?> deleteAnswer(@PathVariable("answerId") int id, @RequestBody Map<String, Object> param,
+	@PostMapping("/delete")
+	public ResponseEntity<?> deleteAnswer(@RequestBody Map<String, Object> param,
 			HttpSession session) {
 		log.info("delete question request: {}", param);
 		try {
+			Integer id =(Integer) param.get("id");
 			// 1. 로그인 체크
 			String username = (String) param.get("author");
+			Integer questionId = (Integer) param.get("questionId");
 			if (username == null) {
 			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			// 2. 파라미터에 id, author 추가
-			param.put("id", id);
+			param.put("answerId", id);
 			param.put("username", username);
 			// 3. 서비스 호출
 			Map<String, Object> result = answerService.deleteAnswer(param);
-
+			result.put("questionId", questionId);
 			// 4. 결과 반환
 			if (Boolean.TRUE.equals(result.get("success"))) {
 				return ResponseEntity.ok(result);

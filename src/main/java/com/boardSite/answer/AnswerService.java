@@ -91,7 +91,6 @@ public class AnswerService {
 		log.info("updateAnswer 메서드: {}", param);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		Map<String, Object> paramMap = new HashMap<>();
-
 		// TODO 게시글 존재 여부 확인
 		paramMap.put("answerId", param.get("answerId"));
 		Map<String, Object> answerDetail = answerMapper.answerDetail(paramMap);
@@ -105,11 +104,11 @@ public class AnswerService {
 		// TODO 권한 체크
 		String dbAuthor = (String) answerDetail.get("author");
 		String username = (String) param.get("username");
-		if (username == null) {
-			resultMap.put("success", false);
-			resultMap.put("message", "댓글 수정 권한이 없습니다.");
-			log.info("댓글 수정 권한 없음");
-			return resultMap;
+		log.info("DB 작성자: {}, 요청 작성자: {}", dbAuthor, username);
+		if (!dbAuthor.equals(username)) {
+		    resultMap.put("success", false);
+		    resultMap.put("message", "댓글 수정 권한이 없습니다.");
+		    return resultMap;
 		}
 
 		// TODO 댓글 수정
@@ -130,7 +129,7 @@ public class AnswerService {
 		return resultMap;
 	}
 
-	// 댓글 수정
+	// 댓글 삭제
 	@Transactional(readOnly = false)
 	public Map<String, Object> deleteAnswer(Map<String, Object> param) throws Exception {
 		log.info("deleteAnswer 메서드: {}", param);

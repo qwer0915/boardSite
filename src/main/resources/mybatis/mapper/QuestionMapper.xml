@@ -4,6 +4,7 @@
 <mapper
 	namespace="com.boardSite.mapper.QuestionMapper">
 
+	<!-- 게시글 작성 -->
 	<insert id="insertQuestion" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
 	    <![CDATA[
 	    INSERT INTO question (subject, content, create_date, author, modify_date)
@@ -11,6 +12,7 @@
 	    ]]>
     </insert>
     
+    <!-- 게시글 상세 조회 -->
     <select id="questionDetail" parameterType="java.util.HashMap" resultType="java.util.HashMap">
     	<![CDATA[ 
     		SELECT
@@ -21,10 +23,11 @@
     			author,
     			modify_date
     		FROM question
-    		WHERE id = #{id}
+    		WHERE id = #{questionId}
     	]]>
     </select>
     
+    <!-- 게시글 수정 -->
     <update id="updateQuestion" parameterType="java.util.HashMap">
 	<![CDATA[ 
 		UPDATE
@@ -34,17 +37,18 @@
 			content = #{content},
 	        modify_date = NOW()
 	    WHERE
-	    	id = #{id}
+	    	id = #{questionId}
 	]]>
 	</update>
 	
+	<!-- 게시글 삭제 -->
 	<delete id="deleteQuestion" parameterType="java.util.HashMap">
 	<![CDATA[ 
 		DELETE
 		FROM
 			question
 		WHERE
-			id = #{id}
+			id = #{questionId}
 	]]>
 	</delete>
 	

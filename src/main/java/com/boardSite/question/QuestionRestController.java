@@ -42,7 +42,7 @@ public class QuestionRestController {
 			if (username == null) {
 			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
-			param.put("author", username);
+			param.put("username", username);
 			Map<String, Object> result = questionService.createQuestion(param);
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
 		} catch (Exception e) {
@@ -51,18 +51,18 @@ public class QuestionRestController {
 	}
 
 	// 글 수정
-	@PostMapping("/update/{id}")
-	public ResponseEntity<?> updateQuestion(@PathVariable("id") int id, @RequestBody Map<String, Object> param,
+	@PostMapping("/update/{questionId}")
+	public ResponseEntity<?> updateQuestion(@PathVariable("questionId") int questionId, @RequestBody Map<String, Object> param,
 			HttpSession session) {
 		log.info("update question request: {}", param);
 		try {
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			// 2. 파라미터에 id, author 추가
-			param.put("id", id);
+			param.put("questionId", questionId);
 			param.put("username", username);
 			// 3. 서비스 호출
 			Map<String, Object> result = questionService.updateQuestion(param);
@@ -79,19 +79,19 @@ public class QuestionRestController {
 	}
 
 	// 글 삭제
-	@PostMapping("/delete/{id}")
-	public ResponseEntity<?> deleteQuestion(@PathVariable("id") int id, @RequestBody Map<String, Object> param,
+	@PostMapping("/delete/{questionId}")
+	public ResponseEntity<?> deleteQuestion(@PathVariable("questionId") int questionId, @RequestBody Map<String, Object> param,
 			HttpSession session) {
 		log.info("delete question request: {}", param);
 		try {
 			// 1. 로그인 체크
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			// 2. 파라미터에 id, author 추가
-			param.put("id", id);
+			param.put("questionId", questionId);
 			param.put("username", username);
 			// 3. 서비스 호출
 			Map<String, Object> result = questionService.deleteQuestion(param);
@@ -108,22 +108,23 @@ public class QuestionRestController {
 	}
 
 	// 글 상세 조회
-	@GetMapping("/{id}")
-	public ResponseEntity getQuestionDetail(@PathVariable("id") int id) {
+	@GetMapping("/{questionId}")
+	public ResponseEntity getQuestionDetail(@PathVariable("questionId") int questionId) {
 		Map<String, Object> param = new HashMap<>();
-		param.put("id", id);
+		param.put("questionId", questionId);
 		Map<String, Object> question = questionService.getQuestionDetail(param);
 
 		Map<String, Object> answerParam = new HashMap<>();
-		answerParam.put("questionId", id);
+		answerParam.put("questionId", questionId);
 		List<Map<String, Object>> answerList = answerService.getAnswerList(answerParam);
-
-		log.info("answerList: {}", answerList);
-		log.info("question: {}", question);
+		Map<String, Object> response = new HashMap<>();
+	    response.put("questionDetail", question.get("questionDetail"));
+	    response.put("answerList", answerList);
+		log.info("response: {}", response);
 		if (question == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시글을 찾을 수 없습니다.");
 		}
-		return ResponseEntity.ok(question);
+		return ResponseEntity.ok(response);
 	}
 
 	// 글 검색

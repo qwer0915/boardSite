@@ -28,17 +28,19 @@ public class AnswerRestController {
 	public ResponseEntity<?> createAnswer(@PathVariable("questionId") Integer questionId,
 			@RequestBody Map<String, Object> param, HttpSession session) {
 		try {
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			Map<String, Object> answerParam = new HashMap<>();
 			answerParam.put("content", param.get("content"));
 			answerParam.put("questionId", questionId);
-			answerParam.put("author", username); // username으로 저장
+			answerParam.put("username", username);
 
 			Map<String, Object> result = answerService.createAnswer(answerParam);
+			
+			log.info("result {result}");
 			return ResponseEntity.status(HttpStatus.CREATED).body(result);
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().body("서버 내부 오류: " + e.getMessage());
@@ -50,9 +52,9 @@ public class AnswerRestController {
 	public ResponseEntity<?> updateAnswer(@PathVariable("answerId") Integer answerId,
 			@RequestBody Map<String, Object> param, HttpSession session) {
 		try {
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			Map<String, Object> answerParam = new HashMap<>();
@@ -74,9 +76,9 @@ public class AnswerRestController {
 		log.info("delete question request: {}", param);
 		try {
 			// 1. 로그인 체크
-			String username = (String) session.getAttribute("loginUser");
+			String username = (String) param.get("author");
 			if (username == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+			    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("작성자 정보가 없습니다.");
 			}
 
 			// 2. 파라미터에 id, author 추가
